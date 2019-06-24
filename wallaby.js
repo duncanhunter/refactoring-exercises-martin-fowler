@@ -16,7 +16,8 @@ module.exports = function(wallaby) {
         typescript: require("typescript")
       })
     },
-    testFramework: "ava",
+
+    testFramework: "jest",
     debug: true
   };
 };
