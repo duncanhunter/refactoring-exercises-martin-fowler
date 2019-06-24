@@ -1,4 +1,4 @@
-import { head } from "ramda";
+import { head, add } from "ramda";
 
 import plays from "./../data/plays.json";
 import invoices from "./../data/invoices.json";
@@ -17,9 +17,6 @@ export function statement(invoices: Invoice[], plays: Plays): string {
   }).format;
 
   for (let perf of invoice.performances) {
-    const play: Play = plays[perf.playId];
-    let thisAmount = _amountFor(perf, play);
-
     //add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);
     // add extra credit for every ten comdedy attendees
@@ -28,18 +25,22 @@ export function statement(invoices: Invoice[], plays: Plays): string {
     }
 
     // print line for this order
-    result += `${play.name}: ${format(thisAmount / 100)} ${
+    result += `${_playFor(perf).name}: ${format(_amountFor(perf) / 100)} ${
       perf.audience
     } seats\n`;
-    totalAmount += thisAmount;
+    totalAmount += _amountFor(perf);
   }
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
 
-  function _amountFor(aPerformance: Performance, play: Play): number {
+  function _playFor(perf: Performance): Play {
+    return plays[perf.playId];
+  }
+
+  function _amountFor(aPerformance: Performance): number {
     let result = 0;
-    switch (play.type) {
+    switch (_playFor(aPerformance).type) {
       case PlayType.tragedy:
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -54,7 +55,7 @@ export function statement(invoices: Invoice[], plays: Plays): string {
         result += 300 * aPerformance.audience;
         break;
       default:
-        throw new Error(`unknown type: ${play.type}`);
+        throw new Error(`unknown type: ${_playFor(aPerformance).type}`);
     }
     return result;
   }
