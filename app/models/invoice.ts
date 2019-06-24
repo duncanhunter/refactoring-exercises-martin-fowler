@@ -1,4 +1,4 @@
-import { Plays as PlayId } from "./play";
+import { PlayId } from "./play";
 
 export interface Invoice {
     customer: string;

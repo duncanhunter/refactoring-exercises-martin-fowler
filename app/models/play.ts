@@ -1,17 +1,17 @@
 export enum PlayType {
-  comdey = "comdey",
+  comedy = "comedy",
   tragedy = "tragedy"
 }
 
-export enum Plays {
+export enum PlayId {
   hamlet = "hamlet",
-  athello = "athello",
+  atHello = "atHello",
   asLike = "asLike"
 }
 
 export interface Play {
   [key: string]: {
-    name: Plays;
+    name: string;
     type: PlayType;
   };
 }

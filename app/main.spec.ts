@@ -1,17 +1,23 @@
-import { head } from "ramda";
+import { head, compose } from "ramda";
 
 import plays from "./../data/plays.json";
 import invoices from "./../data/invoices.json";
 import { statement } from "./main";
 import { Play, Invoice } from "./models";
 
-test("ava should be configured", () => {
+test("jest should be configured", () => {
   expect(true).toEqual(true);
 });
 
 test("Should print title and customer name", () => {
-  const invoice = head(invoices) as Invoice;
-  const expected = statement(invoice as Invoice, plays as Play);
-  const value = `Statement for ${invoice.customer}\n`; //?
-  expect(value).toEqual(expected);
+  const result = statement(invoices as Invoice[], plays as Play);
+  const expected = 
+`Statement for BigCo
+Hamlet: $650.00 55 seats
+As You Like: $580.00 35 seats
+Othello: $500.00 40 seats
+Amount owed is $1,730.00
+You earned 66 credits
+`;
+  expect(result).toEqual(expected);
 });

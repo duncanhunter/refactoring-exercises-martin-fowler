@@ -7,11 +7,11 @@
         "audience": 55
       },
       {
-        "playId": "as-like",
+        "playId": "asLike",
         "audience": 35
       },
       {
-        "playId": "othello",
+        "playId": "otHello",
         "audience": 40
       }
     ]
