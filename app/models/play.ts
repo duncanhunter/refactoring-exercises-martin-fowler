@@ -9,9 +9,14 @@ export enum PlayId {
   asLike = "asLike"
 }
 
-export interface Play {
+export interface Plays {
   [key: string]: {
     name: string;
     type: PlayType;
   };
+}
+
+export interface Play {
+  name: string;
+  type: PlayType;
 }
