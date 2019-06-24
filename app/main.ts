@@ -4,25 +4,34 @@ import plays from "./../data/plays.json";
 import invoices from "./../data/invoices.json";
 import { Invoice, Play, Plays, Performance, PlayType } from "./models";
 
-// const invoices =
 export function statement(invoices: Invoice[], plays: Plays): string {
   const invoice = head(invoices);
-  let totalAmount = 0;
-  let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
   for (let perf of invoice.performances) {
-    volumeCredits += _volumeCreditsFor(perf);
-
-    // print line for this order
     result += `${_playFor(perf).name}: ${usd(_amountFor(perf))} ${
       perf.audience
     } seats\n`;
-    totalAmount += _amountFor(perf);
   }
 
-  result += `Amount owed is ${usd(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `Amount owed is ${usd(_totalAmount())}\n`;
+  result += `You earned ${_totalVoulmeCredits()} credits\n`;
   return result;
+
+  function _totalAmount(): number {
+    let result = 0;
+    for (let perf of invoice.performances) {
+      result += _amountFor(perf);
+    }
+    return result;
+  }
+
+  function _totalVoulmeCredits(): number {
+    let result = 0;
+    for (let perf of invoice.performances) {
+      result += _volumeCreditsFor(perf);
+    }
+    return result;
+  }
 
   function usd(aNumber: number): string {
     return new Intl.NumberFormat("en-US", {
