@@ -1,4 +1,4 @@
-import { head, add } from "ramda";
+import { head } from "ramda";
 
 import plays from "./../data/plays.json";
 import invoices from "./../data/invoices.json";
@@ -78,3 +78,8 @@ export function statement(invoices: Invoice[], plays: Plays): string {
     return result;
   }
 }
+
+
+// const result = statement(invoices as Invoice[], plays as Plays);
+
+// console.log(result)
