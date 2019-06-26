@@ -24,4 +24,12 @@
 6. Slide statements
 7. Split loop
 8. Replace loop with pipeline
-9.
+
+
+## Check list
+- can I make the names show more intention
+- have Itested the unhappy path
+- have I typed everything
+- are my functions pure
+- consider the design stamina hypothesis and is it faster
+- I am alwasy trying to learn to code faster which means refactoring and testing    
