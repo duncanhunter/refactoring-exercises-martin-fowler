@@ -7,11 +7,18 @@ import {
   EnrichedPerformance,
   Plays
 } from "./models";
+import construct from "ramda/es/construct";
+import { tsConstructorType } from "@babel/types";
 
-export function createStatementData(invoice: Invoice, plays: Plays): StatementData {
+export function createStatementData(
+  invoice: Invoice,
+  plays: Plays
+): StatementData {
   const statementData = {} as StatementData;
   statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map(statementData => _enrichPerformance(statementData, plays));
+  statementData.performances = invoice.performances.map(statementData =>
+    _enrichPerformance(statementData, plays)
+  );
   statementData.totalVolumeCredits = _totalVoulmeCredits(statementData);
   statementData.totalAmount = _totalAmount(statementData);
   return statementData;
@@ -35,53 +42,67 @@ export function _enrichPerformance(
   aPerformance: Performance,
   plays: Plays
 ): EnrichedPerformance {
+  const calculator = _creatPerformanceCalculator(
+    aPerformance,
+    _playFor(aPerformance, plays)
+  );
   const result: EnrichedPerformance = {
     ...aPerformance,
-    play: _playFor(aPerformance, plays),
-    amount: 0,
-    volumeCredits: 0
+    play: calculator.play,
+    amount: calculator.amount,
+    volumeCredits: calculator.volumeCredits
   };
 
-  return {
-    ...result,
-    amount: _amountFor(result),
-    volumeCredits: _volumeCreditsFor(result)
-  };
+  return result;
+}
+
+export function _creatPerformanceCalculator(
+  aPerformance: Performance,
+  aPlay: Play
+) {
+  switch (aPlay.type) {
+    case PlayType.tragedy:
+      return new TagedyCalculator(aPerformance, aPlay);
+    case PlayType.comedy:
+      return new ComedyCalculator(aPerformance, aPlay);
+    default:
+      throw new Error(`unknown type: ${aPlay.type}`);
+  }
+}
+export class PerformanceCalculator {
+  constructor(public performance: Performance, public play: Play) {}
+
+  get volumeCredits(): number {
+    return Math.max(this.performance.audience - 30, 0);
+  }
+}
+
+class TagedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 40000;
+    if (this.performance.audience > 30) {
+      result += 1000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
+class ComedyCalculator extends PerformanceCalculator {
+  get amount(): number {
+    let result = 30000;
+    if (this.performance.audience > 20) {
+      result += 10000 + 500 * (this.performance.audience - 20);
+    }
+    result += 300 * this.performance.audience;
+    return result;
+  }
+
+  get volumeCredits(): number {
+    return Math.floor(this.performance.audience / 5);
+  }
 }
 
 export function _playFor(perf: Performance, plays: Plays): Play {
   return plays[perf.playId];
-}
-
-export function _amountFor(aPerformance: EnrichedPerformance): number {
-  let result = 0;
-  switch (aPerformance.play.type) {
-    case PlayType.tragedy:
-      result = 40000;
-      if (aPerformance.audience > 30) {
-        result += 1000 * (aPerformance.audience - 30);
-      }
-      break;
-    case PlayType.comedy:
-      result = 30000;
-      if (aPerformance.audience > 20) {
-        result += 10000 + 500 * (aPerformance.audience - 20);
-      }
-      result += 300 * aPerformance.audience;
-      break;
-    default:
-      throw new Error(`unknown type: ${aPerformance.play.type}`);
-  }
-  return result;
-}
-
-export function _volumeCreditsFor(aPerformance: EnrichedPerformance): number {
-  let result = 0;
-  result += Math.max(aPerformance.audience - 30, 0);
-  if (PlayType.comedy) {
-    result += Math.floor(aPerformance.audience / 5);
-  }
-  return result;
 }
 
 export function _totalVoulmeCredits(data: StatementData): number {

@@ -19,7 +19,7 @@ test("Should print title and customer name", () => {
   <tr><td>Othello</td><td>40</td><td>$500.00</td></tr>
 </table>
 <p>Amount owed is <em>$1,730.00</em></p>
-<p>You earned <em>66</em> credits</p>
+<p>You earned <em>42</em> credits</p>
 `;
   expect(result).toEqual(expected);
 });
