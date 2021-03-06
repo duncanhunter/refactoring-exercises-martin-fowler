@@ -1,9 +1,7 @@
-import { head, compose } from "ramda";
-
 import plays from "./../data/plays.json";
 import invoices from "./../data/invoices.json";
 import { statement } from "./main";
-import { Play, Invoice } from "./models";
+import { Play, Invoice, PlayId } from "./models";
 
 test("jest should be configured", () => {});
 
@@ -16,6 +14,20 @@ test("Should print title and customer name", () => {
     Othello: $500.00 40 seats
     Amount owed is $1,730.00
     You earned 66 credits
+    "
+  `);
+});
+
+test("Should charge for one play", () => {
+  const testInvoices: Invoice[] = [
+    { ...invoices[0], performances: [{ playId: PlayId.asLike, audience: 10 }] },
+  ];
+  const result = statement(testInvoices, plays as Play);
+  expect(result).toMatchInlineSnapshot(`
+    "Statement for BigCo
+    As You Like: $330.00 10 seats
+    Amount owed is $330.00
+    You earned 2 credits
     "
   `);
 });
