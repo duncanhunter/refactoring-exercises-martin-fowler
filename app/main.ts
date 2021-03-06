@@ -1,10 +1,7 @@
 import { head } from "ramda";
 
-import plays from "./../data/plays.json";
-import invoices from "./../data/invoices.json";
 import { Invoice, Play, PlayType } from "./models";
 
-// const invoices =
 export function statement(invoices: Invoice[], plays: Play) {
   const invoice = head(invoices);
   let totalAmount = 0;
